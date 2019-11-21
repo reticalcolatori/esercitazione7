@@ -8,7 +8,7 @@ public interface RegistryRemotoTagClient extends RegistryRemotoClient {
      * Serve per cercare i nomi di servizio avente il tag.
      *
      * @param tag tag che deve avere il servizio
-     * @throws
+     * @throws RemoteException Lancia eccezzione in caso di errore
      * @return array con i nomi che rispettano il tag.
      */
     public String[] cercaTag(String tag) throws RemoteException;
