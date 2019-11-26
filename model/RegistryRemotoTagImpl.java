@@ -138,8 +138,10 @@ public class RegistryRemotoTagImpl extends UnicastRemoteObject implements
 		if(nomeLogico == null || tag == null) throw new RemoteException("Uno dei parametri è null");
 		//if(!Arrays.asList(tags).contains(tag)) throw new RemoteException("Tag non consentito");
 		for (String currTag : tags) {
-			if(currTag.equals(tag))
+			if(currTag.equals(tag)){
 				tagCorrect = true;
+				break;
+			}
 		}
 		
 		if(!tagCorrect) throw new RemoteException("Tag non consentito");
@@ -148,8 +150,8 @@ public class RegistryRemotoTagImpl extends UnicastRemoteObject implements
 			if ( nomeLogico.equals((String) table[i][0]) ) {
 				
 				for (int j = 2; j < maxTags + 2; j++) {
-					if(table[i][j] != null) {
-						if (result == false) 
+					if(table[i][j] == null) {
+						if (!result) 
 							result = true;
 						
 						table[i][j] = (String) tag;
@@ -174,6 +176,7 @@ public class RegistryRemotoTagImpl extends UnicastRemoteObject implements
 		if(!tagCorrect) throw new RemoteException("Tag non consentito");
 		
 		if( tag == null ) return new String[0];
+
 		for (int i = 0; i < tableSize; i++) {
 			for (int j = 2; j < maxTags + 2; j++) {
 				if ( tag.equals((String) table[i][j]) ) {
@@ -218,17 +221,19 @@ public class RegistryRemotoTagImpl extends UnicastRemoteObject implements
 				System.exit(2);
 			}
 		}
-/*
+
 		// Impostazione del SecurityManager
 		if (System.getSecurityManager() == null)
+			System.setProperty("java.security.policy", "rmi.policy");
 			System.setSecurityManager(new RMISecurityManager());
-*/
+
 		// Registrazione del servizio RMI
 		String completeName = "//" + registryRemotoHost + ":" + registryRemotoPort
 				+ "/" + registryRemotoName;
 		try {
 			RegistryRemotoTagImpl serverRMI = new RegistryRemotoTagImpl();
 			Naming.rebind(completeName, serverRMI);
+
 			System.out.println("Server RMI: Servizio \"" + registryRemotoName
 					+ "\" registrato");
 		} catch (Exception e) {

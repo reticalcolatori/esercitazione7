@@ -34,21 +34,32 @@ class ClientCongresso {
 				System.exit(1);
 			}
 		}
-/*		
+		
 		// 	Impostazione del SecurityManager
-		if (System.getSecurityManager() == null)
+		if (System.getSecurityManager() == null){
+			System.setProperty("java.security.policy", "rmi.policy");
 			System.setSecurityManager(new RMISecurityManager());
-*/
+		}
+			
+
 		// Connessione al servizio RMI remoto
 		try {
 			String completeRemoteRegistryName = "//" + registryRemotoHost + ":"
 					+ registryRemotoPort + "/" + registryRemotoName;
 			RegistryRemotoTagClient registryRemoto = 
 					(RegistryRemotoTagClient) Naming.lookup(completeRemoteRegistryName);
+
 			String serviceNamePerTag[] = registryRemoto.cercaTag("CUCINA");
+
 			for (String string : serviceNamePerTag) {
 				System.out.println(string);
 			}
+
+			if(serviceNamePerTag.length == 0){
+				System.out.println("Errore: Il tag CUCINA non ha nomi di servizio associati!");
+				System.exit(1);
+			}
+
 			ServerCongresso serverRMI = 
 					(ServerCongresso) registryRemoto.cerca(serviceNamePerTag[0]);
 			System.out.println("ClientRMI: Servizio \"" + serviceNamePerTag[0] + "\" connesso");

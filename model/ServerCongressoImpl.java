@@ -77,12 +77,13 @@ public class ServerCongressoImpl extends UnicastRemoteObject implements
         System.exit(2);
       }
     }
-/*
+
     // Impostazione del SecurityManager
     if (System.getSecurityManager() == null) {
+      System.setProperty("java.security.policy", "rmi.policy");
       System.setSecurityManager(new RMISecurityManager());
     }
-*/
+
     // Registrazione del servizio RMI
     String completeRemoteRegistryName = "//" + registryRemotoHost + ":"
         + registryRemotoPort + "/" + registryRemotoName;
@@ -90,11 +91,28 @@ public class ServerCongressoImpl extends UnicastRemoteObject implements
     try {
       RegistryRemotoTagServer registryRemoto = (RegistryRemotoTagServer) Naming
           .lookup(completeRemoteRegistryName);
+
       ServerCongressoImpl serverRMI = new ServerCongressoImpl();
-      registryRemoto.aggiungi(serviceName, serverRMI);
-      registryRemoto.associaTag(serviceName, "CUCINA");
-      System.out.println("Server RMI: Servizio \"" + serviceName
-          + "\" registrato");
+
+      boolean resultAdd = registryRemoto.aggiungi(serviceName, serverRMI);
+
+      if(resultAdd)
+        System.out.println("Server RMI Remoto: Servizio \"" + serviceName
+        + "\" registrato");
+      else
+        System.out.println("Server RMI Remoto: Servizio \"" + serviceName
+        + "\" NON registrato");
+      
+      boolean resultAssocia = registryRemoto.associaTag(serviceName, "CUCINA");
+
+      if(resultAssocia)
+        System.out.println("Server RMI Remoto: Servizio \"" + serviceName
+        + "\" associato al tag CUCINA");
+      else
+        System.out.println("Server RMI Remoto: Servizio \"" + serviceName
+        + "\" NON associato al tag CUCINA");
+      
+
     } catch (Exception e) {
       System.err.println("Server RMI \"" + serviceName + "\": "
           + e.getMessage());
